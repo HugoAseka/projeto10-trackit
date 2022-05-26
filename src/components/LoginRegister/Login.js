@@ -10,7 +10,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   let [loading, setLoading] = useState(false);
-  let { token, setToken } = useContext(UserContext);
+  let { setBody } = useContext(UserContext);
   const regObj = {
     email,
     password,
@@ -25,12 +25,17 @@ export default function Login() {
     );
     requisition
       .then((response) => {
-        setToken(response.data.token);
+        setBody({
+          email: response.data.email,
+          name: response.data.name,
+          image: response.data.image,
+          token: response.data.token,
+        });
         setLoading(false);
-        navigate("/habitos");
+        navigate("/hoje");
       })
       .catch((error) => {
-        console.log(error);
+        setLoading(false);
       });
   }
 

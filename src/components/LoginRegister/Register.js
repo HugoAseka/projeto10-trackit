@@ -9,7 +9,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
-  let [loading,setLoading] = useState(false);
+  let [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const regObj = {
     email,
@@ -27,11 +27,10 @@ export default function Register() {
     );
     requisition
       .then((response) => {
-        console.log(response.data);
         navigate("/");
       })
       .catch((error) => {
-        console.log(error);
+        setLoading(false);
       });
   }
 
@@ -73,7 +72,9 @@ export default function Register() {
           disabled={loading}
           required
         />
-        <button disabled={loading} type="submit">{loading ? <ThreeDots color="white" /> : 'Cadastrar'}</button>
+        <button disabled={loading} type="submit">
+          {loading ? <ThreeDots color="white" /> : "Cadastrar"}
+        </button>
         <span>
           <Link to="/">Já tem uma conta? Faça um login</Link>
         </span>
@@ -123,9 +124,9 @@ const Inputs = styled.form`
     background-color: #52b6ff;
     border: none;
     color: white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   span {
     margin-top: 20px;
