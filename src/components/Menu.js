@@ -41,4 +41,3 @@ const Container = styled.div`
   }
 `;
 
-const Today = styled.div``;

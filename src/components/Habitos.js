@@ -4,6 +4,8 @@ import Header from "./Header";
 import Menu from "./Menu";
 import styled from "styled-components";
 import axios from "axios";
+import { ThreeDots } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
 
 function AddNewHabit({
   setShowAddNewHabit,
@@ -12,18 +14,19 @@ function AddNewHabit({
   days,
   weekDays,
   setWeekDays,
-  importHabits
+  importHabits,
 }) {
   const { body } = useContext(UserContext);
   const config = {
     headers: { Authorization: `Bearer ${body.token}` },
   };
+  let [loading, setLoading] = useState(false);
 
   function createHabit() {
-    for (let i = 1; i < 7; i++) {
-      if (weekDays[i].selected === true) days.push(i);
+    setLoading(true);
+    for (let i = 0; i < weekDays.length; i++) {
+      if (weekDays[i].selected === true) days.push(i + 1);
     }
-    if (weekDays[0].selected === true) days.push(7);
     const body = { name, days };
     const promise = axios.post(
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
@@ -31,18 +34,20 @@ function AddNewHabit({
       config
     );
     promise
-      .then((response) => {
-        console.log(response.data);
+      .then(() => {
         setName("");
         days = [];
         setShowAddNewHabit(false);
+        setLoading(false);
         for (let i = 0; i < weekDays.length; i++) {
           weekDays[i].selected = false;
         }
         importHabits();
       })
       .catch((error) => {
-        console.log(error);
+        setLoading(false);
+        const status  = error.response.request.status;
+        if(status === 422) alert('Nome do hábito não pode estar vazio!')
       });
   }
   return (
@@ -52,12 +57,14 @@ function AddNewHabit({
         type="text"
         placeholder="nome do hábito"
         value={name}
+        disabled={loading}
       />
       <div>
         {weekDays.map((e, index) => (
           <Day
             key={index}
             selected={e.selected}
+            disabled={loading}
             onClick={() => {
               e.selected = !e.selected;
               setWeekDays([...weekDays]);
@@ -69,35 +76,61 @@ function AddNewHabit({
       </div>
       <Bottom>
         <p onClick={() => setShowAddNewHabit(false)}>Cancelar</p>
-        <div onClick={createHabit}>Salvar</div>
+        <button disabled={loading} onClick={createHabit}>
+          {loading ? <ThreeDots color="white" /> : "Salvar"}
+        </button>
       </Bottom>
     </NewHabit>
   );
 }
 
-function RenderHabits({ habits, weekDays }) {
+function RenderHabits({ habits, weekDays, importHabits }) {
+  let [confirmDelete, setConfirmDelete] = useState([]);
+  function updateDelete() {
+    setConfirmDelete([]);
+    for (let i = 0; i < habits.length; i++) confirmDelete.push(false);
+  }
+  useEffect(() => {
+    updateDelete();
+  }, [habits]);
   function selected(k) {
     const aux = [];
-    for (let j = 0; j < habits[k].days.length; j++) {
-      if (7 === habits[k].days[j]) {
-        aux.push(true);
-        break;
-      }
-    }
-    if (aux.length === 0) aux.push(false);
-
-    for (let i = 1; i < 7; i++) {
+    for (let i = 1; i < 8; i++) {
       for (let j = 0; j < habits[k].days.length; j++) {
         if (i === habits[k].days[j]) {
           aux.push(true);
           break;
         }
       }
-      if (aux.length !== i + 1) aux.push(false);
+      if (aux.length !== i) aux.push(false);
     }
     return aux;
   }
+  const { body } = useContext(UserContext);
+  const config = {
+    headers: { Authorization: `Bearer ${body.token}` },
+  };
   const selectedArr = habits.map((el, k) => selected(k));
+  function confirm(i) {
+    confirmDelete[i] = !confirmDelete[i];
+    setConfirmDelete([...confirmDelete]);
+    console.log(confirmDelete);
+  }
+
+  function deleteHabit(id) {
+    const promise = axios.delete(
+      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`,
+      config
+    );
+    promise
+      .then(() => {
+        importHabits();
+        console.log(confirmDelete);
+      })
+      .catch((error) => {
+        alert(error.data);
+      });
+  }
 
   if (habits.length === 0) {
     return (
@@ -117,11 +150,17 @@ function RenderHabits({ habits, weekDays }) {
                 {weekDays.map((e, index) => (
                   <Day selected={selectedArr[i][index]} key={index}>
                     {e.name}
-                    
                   </Day>
                 ))}
               </div>
-              <ion-icon name="trash-outline"></ion-icon>
+              {confirmDelete[i] ? (
+                <Del onClick={() => deleteHabit(el.id)}>Deletar</Del>
+              ) : (
+                <ion-icon
+                  onClick={() => confirm(i)}
+                  name="trash-outline"
+                ></ion-icon>
+              )}
             </NewHabit>
           );
         })}
@@ -131,6 +170,7 @@ function RenderHabits({ habits, weekDays }) {
 }
 
 export default function Habits() {
+  const navigate = useNavigate();
   const [showAddNewHabit, setShowAddNewHabit] = useState(false);
   const [name, setName] = useState("");
   let days = [];
@@ -147,7 +187,7 @@ export default function Habits() {
   const config = {
     headers: { Authorization: `Bearer ${body.token}` },
   };
-  
+
   const [habits, setHabits] = useState([]);
 
   function importHabits() {
@@ -160,10 +200,15 @@ export default function Habits() {
         setHabits([...response.data]);
       })
       .catch((error) => {
-        console.log(error);
+        const status = error.response.request.status;
+        console.log(error.response.request.status);
+        if (status === 401) {
+          alert("Login expirado!");
+          navigate("/");
+        }
       });
   }
-  
+
   useEffect(() => importHabits(), []);
 
   return (
@@ -190,7 +235,11 @@ export default function Habits() {
         ) : (
           ""
         )}
-        <RenderHabits habits={habits} weekDays={weekDays} />
+        <RenderHabits
+          importHabits={importHabits}
+          habits={habits}
+          weekDays={weekDays}
+        />
       </Container>
       <Menu />
     </>
@@ -206,6 +255,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
 `;
 const Add = styled.div`
   width: 90%;
@@ -231,7 +281,7 @@ const NewHabit = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  position:relative;
+  position: relative;
 
   input {
     width: 100%;
@@ -239,15 +289,15 @@ const NewHabit = styled.div`
     border: 2px solid #d4d4d4;
     height: 40px;
   }
-  div {
+  > div {
     width: 100%;
     display: flex;
     gap: 6px;
   }
-  ion-icon{
-      position:absolute;
-      right: 10px;
-      top: 10px;
+  ion-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
   }
 `;
 const Day = styled.button`
@@ -278,7 +328,7 @@ const Bottom = styled.div`
     margin-right: 20px;
     cursor: pointer;
   }
-  div {
+  button {
     background-color: #52b6ff;
     color: white;
     width: 100px;
@@ -288,6 +338,7 @@ const Bottom = styled.div`
     justify-content: center;
     border-radius: 6px;
     cursor: pointer;
+    border: none;
   }
 `;
 const NoHabits = styled.div`
@@ -297,4 +348,17 @@ const NoHabits = styled.div`
   width: 90%;
   margin-top: 50px;
   font-weight: 300;
+`;
+
+const Del = styled.p`
+  width: 70px;
+  height: 20px;
+  background-color: red;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
