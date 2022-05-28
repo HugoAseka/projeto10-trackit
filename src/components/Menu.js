@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
-
+import React from 'react';
 export default function Menu() {
   const navigate = useNavigate();
   let { percent } = useContext(UserContext);
