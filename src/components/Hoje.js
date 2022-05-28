@@ -66,6 +66,7 @@ export default function Hoje() {
   useEffect(() => importHabits(), []);
 
   function done(id, status) {
+    console.log(status);
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
     if (!status) {
       const promise = axios.post(`${URL}/check`, null, config);
