@@ -8,9 +8,10 @@ import Habits from "./Habitos";
 
 export default function App() {
   const [body,setBody] = useState({});
+  let [percent, setPercent] = useState(0);
   return (
     <BrowserRouter>
-      <UserContext.Provider value={{ body, setBody }}>
+      <UserContext.Provider value={{ body, setBody, percent,setPercent }}>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/cadastro" element={<Register />} />

@@ -1,11 +1,40 @@
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { CircularProgressbar } from "react-circular-progressbar";
+import { useContext } from "react";
+import UserContext from "../contexts/UserContext";
+
 export default function Menu() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  let { percent } = useContext(UserContext);
   return (
     <Container>
       <p onClick={() => navigate("/habitos")}>Hábitos</p>
-      <div onClick={() => navigate("/hoje")}>Hoje</div>
+      <CenterContainer>
+        <Center>
+          <CircularProgressbar
+            onClick={() => navigate("/hoje")}
+            value={percent}
+            text="Hoje"
+            background={true}
+            styles={{
+              root: {},
+              path: {
+                stroke: "#FFFFFF",
+              },
+              trail: {
+                stroke: "#52b6ff",
+              },
+              text: {
+                fill: "#ffffff",
+              },
+              background: {
+                fill: "#52b6ff",
+              },
+            }}
+          />
+        </Center>
+      </CenterContainer>
       <p onClick={() => navigate("/historico")}>Histórico</p>
     </Container>
   );
@@ -18,26 +47,29 @@ const Container = styled.div`
   height: 80px;
   width: 100%;
   background-color: #ffffff;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
   box-shadow: -2px 0 8px #8c8b8b;
-  
-  p{
-      color:#52B6FF;
-      cursor: pointer;
-  }
-  div{
-      background-color:#52B6FF;
-      color:white;
-      margin-bottom:40px;
-      width:100px;
-      height:100px;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      border-radius:100px;
-      cursor: pointer;
+
+  p {
+    color: #52b6ff;
+    cursor: pointer;
   }
 `;
-
+const CenterContainer = styled.div`
+  width: 100px;
+  height: 100px;
+  background-color:#52b6ff;
+  border-radius: 50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom: 40px;
+`;
+const Center = styled.div`
+  width: 80px ;
+  height: 80px  ;
+  border-radius: 100px;
+  cursor: pointer;
+`;

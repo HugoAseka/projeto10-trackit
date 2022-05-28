@@ -28,19 +28,19 @@ export default function Hoje() {
     currentWeekDay = "Sábado";
   }
   const navigate = useNavigate();
-  let { body } = useContext(UserContext);
+  let { body, percent, setPercent } = useContext(UserContext);
   const config = {
     headers: {
-      'Authorization': `Bearer ${body.token}`,
+      Authorization: `Bearer ${body.token}`,
     },
   };
-  let [percent, setPercent] = useState(0);
+
   const [habits, setHabits] = useState([]);
 
   function updatePercentage() {
     if (habits.length > 0) {
       let aux = 0;
-      for (let i = 0; i < setHabits.length; i++) {
+      for (let i = 0; i < habits.length; i++) {
         if (habits[i].done === true) aux++;
       }
       setPercent((aux / habits.length) * 100);
@@ -48,31 +48,36 @@ export default function Hoje() {
   }
 
   useEffect(() => updatePercentage(), [habits]);
-  function importHabits(){
+  function importHabits() {
     const promise = axios.get(
-        "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
-        config
-      );
-      promise
-        .then((response) => {
-          console.log(response);
-          setHabits([...response.data]);
-        })
-        .catch((error) => {
-          console.log(error);
-          navigate("/");
-        });
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
+      config
+    );
+    promise
+      .then((response) => {
+        console.log(response);
+        setHabits([...response.data]);
+      })
+      .catch((error) => {
+        alert(error.response.status);
+        navigate("/");
+      });
   }
   useEffect(() => importHabits(), []);
-  function done(id) {
-    const promise = axios.post(
-        `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,
-        null,
-        config
-      );
+
+  function done(id, status) {
+    const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
+    if (!status) {
+      const promise = axios.post(`${URL}/check`, null, config);
       promise
-        .then(() => importHabits() )
+        .then(() => importHabits())
         .catch((error) => console.log(error.response));
+    } else {
+      const promise = axios.post(`${URL}/uncheck`, null, config);
+      promise
+        .then(() => importHabits())
+        .catch((error) => console.log(error.response));
+    }
   }
   return (
     <>
@@ -92,26 +97,34 @@ export default function Hoje() {
         </ProgressSubtitle>
         {habits.map((el, ind) => {
           return (
-            <Habit done={el.done} key={ind}>
+            <Habit
+              done={el.done}
+              key={ind}
+              current={el.currentSequence}
+              highest={el.highestSequence}
+            >
               <h3>{el.name}</h3>
-              <p>Sequência atual: {el.currentSequence} dias</p>
-              <p>Seu recorde: {el.highestSequence} dias</p>
+              <p>
+                Sequência atual: <span>{el.currentSequence} dias</span>{" "}
+              </p>
+              <p>
+                Seu recorde: <span>{el.highestSequence} dias</span>{" "}
+              </p>
               <ion-icon
-                onClick={() => done(el.id)}
-                
+                onClick={() => done(el.id, el.done)}
                 name="checkmark-outline"
               ></ion-icon>
             </Habit>
           );
         })}
       </Container>
-      <Menu />
+      <Menu percentage={percent} />
     </>
   );
 }
 const Container = styled.div`
   margin-top: 80px;
-  padding-bottom: 100px;
+  padding-bottom: 120px;
   background-color: #e5e5e5;
   height: 100%;
   width: 100%;
@@ -153,6 +166,13 @@ const Habit = styled.div`
   position: relative;
   p {
     max-width: 60%;
+  }
+  p:nth-child(2) span {
+    color: ${({ done }) => (done ? "#8fc549" : "#666666")};
+  }
+  p:nth-child(3) span {
+    color: ${({ done, current, highest }) =>
+      done && current === highest ? "#8fc549" : "#666666"};
   }
 
   h3 {

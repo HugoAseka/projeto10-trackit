@@ -93,17 +93,16 @@ function RenderHabits({ habits, weekDays, importHabits }) {
   useEffect(() => {
     updateDelete();
   }, [habits]);
-  
-  function selected(k) {
+
+  function selected(el) {
     const aux = [];
     for (let i = 0; i < 7; i++) {
-      for (let j = 0; j < habits[k].days.length; j++) {
-        if (i === habits[k].days[j]) {
+      for (let j = 0; j < el.days.length; j++) {
+        if (i === Number(el.days[j])) {
           aux.push(true);
-          break;
         }
       }
-      if (aux.length !== i) aux.push(false);
+      if (aux.length !== i + 1) aux.push(false);
     }
     return aux;
   }
@@ -111,11 +110,10 @@ function RenderHabits({ habits, weekDays, importHabits }) {
   const config = {
     headers: { Authorization: `Bearer ${body.token}` },
   };
-  const selectedArr = habits.map((el, k) => selected(k));
+  const selectedArr = habits.map((el) => selected(el));
   function confirm(i) {
     confirmDelete[i] = !confirmDelete[i];
     setConfirmDelete([...confirmDelete]);
-    console.log(confirmDelete);
   }
 
   function deleteHabit(id) {
@@ -126,7 +124,6 @@ function RenderHabits({ habits, weekDays, importHabits }) {
     promise
       .then(() => {
         importHabits();
-        console.log(confirmDelete);
       })
       .catch((error) => {
         alert(error.data);
@@ -199,7 +196,6 @@ export default function Habits() {
     promise
       .then((response) => {
         setHabits([...response.data]);
-        console.log(response.data)
       })
       .catch((error) => {
         const status = error.response.request.status;
@@ -250,7 +246,7 @@ export default function Habits() {
 
 const Container = styled.div`
   margin-top: 80px;
-  padding-bottom: 100px;
+  padding-bottom: 120px;
   background-color: #e5e5e5;
   height: 100%;
   width: 100%;
