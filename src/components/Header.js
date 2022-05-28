@@ -34,6 +34,6 @@ const Container = styled.header`
   img {
     height: 80%;
     width: auto;
-    border-radius: 60%;
+    border-radius: 50%;
   }
 `;

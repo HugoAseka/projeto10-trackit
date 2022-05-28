@@ -25,7 +25,7 @@ function AddNewHabit({
   function createHabit() {
     setLoading(true);
     for (let i = 0; i < weekDays.length; i++) {
-      if (weekDays[i].selected === true) days.push(i + 1);
+      if (weekDays[i].selected === true) days.push(i);
     }
     const body = { name, days };
     const promise = axios.post(
@@ -46,8 +46,8 @@ function AddNewHabit({
       })
       .catch((error) => {
         setLoading(false);
-        const status  = error.response.request.status;
-        if(status === 422) alert('Nome do hábito não pode estar vazio!')
+        const status = error.response.request.status;
+        if (status === 422) alert("Nome do hábito não pode estar vazio!");
       });
   }
   return (
@@ -93,9 +93,10 @@ function RenderHabits({ habits, weekDays, importHabits }) {
   useEffect(() => {
     updateDelete();
   }, [habits]);
+  
   function selected(k) {
     const aux = [];
-    for (let i = 1; i < 8; i++) {
+    for (let i = 0; i < 7; i++) {
       for (let j = 0; j < habits[k].days.length; j++) {
         if (i === habits[k].days[j]) {
           aux.push(true);
@@ -198,6 +199,7 @@ export default function Habits() {
     promise
       .then((response) => {
         setHabits([...response.data]);
+        console.log(response.data)
       })
       .catch((error) => {
         const status = error.response.request.status;
