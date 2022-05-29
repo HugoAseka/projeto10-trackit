@@ -6,7 +6,7 @@ import Menu from "./Menu";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import dayjs from "dayjs";
-
+import React from "react";
 export default function Hoje() {
   const indexCurrentWeekDay = dayjs().format("d");
   const dayAndMonth = dayjs().format("DD/MM");

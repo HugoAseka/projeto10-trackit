@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
-
+import React from "react";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");

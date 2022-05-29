@@ -1,7 +1,7 @@
 import UserContext from "../contexts/UserContext";
 import { useContext } from "react";
 import styled from "styled-components";
-
+import React from "react";
 export default function Header() {
   const { body } = useContext(UserContext);
 
