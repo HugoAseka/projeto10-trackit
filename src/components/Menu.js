@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { useContext } from "react";
 import UserContext from "../contexts/UserContext";
-import React from 'react';
+import React from "react";
 export default function Menu() {
   const navigate = useNavigate();
   let { percent } = useContext(UserContext);
@@ -60,16 +60,16 @@ const Container = styled.div`
 const CenterContainer = styled.div`
   width: 100px;
   height: 100px;
-  background-color:#52b6ff;
+  background-color: #52b6ff;
   border-radius: 50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 40px;
 `;
 const Center = styled.div`
-  width: 80px ;
-  height: 80px  ;
+  width: 80px;
+  height: 80px;
   border-radius: 100px;
   cursor: pointer;
 `;

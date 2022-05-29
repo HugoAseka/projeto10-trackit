@@ -5,6 +5,7 @@ import UserContext from "../contexts/UserContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Habits from "./Habitos";
+import React from "react";
 
 export default function App() {
   const [body,setBody] = useState({});
