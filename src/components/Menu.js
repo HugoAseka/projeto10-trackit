@@ -11,9 +11,8 @@ export default function Menu() {
     <Container>
       <p onClick={() => navigate("/habitos")}>Hábitos</p>
       <CenterContainer>
-        <Center>
+        <Center onClick={() => navigate("/hoje")}>
           <CircularProgressbar
-            onClick={() => navigate("/hoje")}
             value={percent}
             text="Hoje"
             background={true}

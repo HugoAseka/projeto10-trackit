@@ -26,10 +26,13 @@ export default function Register() {
       regObj
     );
     requisition
-      .then((response) => {
+      .then(() => {
         navigate("/");
       })
       .catch((error) => {
+        if (error.response.status === 409) {
+          alert("Usuário já existente. Tente novamente!");
+        }
         setLoading(false);
       });
   }
@@ -86,18 +89,18 @@ export default function Register() {
 const Container = styled.div`
   display: flex;
   width: 100vw;
-  height: 100vh;
   flex-direction: column;
   align-items: center;
-  gap: 100px;
+  gap: 40px;
   background-color: #fafafa;
+  min-height: 100vh;
 `;
 
 const Logo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 80px;
+  margin-top: 20px;
 `;
 
 const Inputs = styled.form`
@@ -113,7 +116,6 @@ const Inputs = styled.form`
     width: 100%;
     border: 1px ridge #d4d4d4;
     padding-left: 20px;
-    color: #d4d4d4;
     font-size: 20px;
   }
   button {

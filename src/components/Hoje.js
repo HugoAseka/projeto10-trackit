@@ -54,19 +54,17 @@ export default function Hoje() {
       config
     );
     promise
-      .then((response) => {
-        console.log(response);
-        setHabits([...response.data]);
-      })
+      .then((response) => setHabits([...response.data]))
       .catch((error) => {
-        alert(error.response.status);
-        navigate("/");
+        if (error.response.status === 401) {
+          alert("Login expirado, redirecionando para página inicial!");
+          navigate("/");
+        }
       });
   }
   useEffect(() => importHabits(), []);
 
   function done(id, status) {
-    console.log(status);
     const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`;
     if (!status) {
       const promise = axios.post(`${URL}/check`, null, config);

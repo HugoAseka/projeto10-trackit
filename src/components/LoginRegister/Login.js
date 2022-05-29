@@ -35,6 +35,9 @@ export default function Login() {
         navigate("/hoje");
       })
       .catch((error) => {
+        if (error.response.status === 401) {
+          alert("Email ou senha inválidos, tente novamente.");
+        }
         setLoading(false);
       });
   }
@@ -103,7 +106,6 @@ const Inputs = styled.form`
     width: 100%;
     border: 1px ridge #d4d4d4;
     padding-left: 20px;
-    color: #d4d4d4;
     font-size: 20px;
   }
   button {
@@ -121,5 +123,6 @@ const Inputs = styled.form`
   span {
     margin-top: 20px;
     color: #52b6ff;
+    text-align: center;
   }
 `;

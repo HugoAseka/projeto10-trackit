@@ -86,15 +86,6 @@ function AddNewHabit({
 }
 
 function RenderHabits({ habits, weekDays, importHabits }) {
-  let [confirmDelete, setConfirmDelete] = useState([]);
-  function updateDelete() {
-    setConfirmDelete([]);
-    for (let i = 0; i < habits.length; i++) confirmDelete.push(false);
-  }
-  useEffect(() => {
-    updateDelete();
-  }, [habits]);
-
   function selected(el) {
     const aux = [];
     for (let i = 0; i < 7; i++) {
@@ -112,23 +103,22 @@ function RenderHabits({ habits, weekDays, importHabits }) {
     headers: { Authorization: `Bearer ${body.token}` },
   };
   const selectedArr = habits.map((el) => selected(el));
-  function confirm(i) {
-    confirmDelete[i] = !confirmDelete[i];
-    setConfirmDelete([...confirmDelete]);
-  }
 
   function deleteHabit(id) {
-    const promise = axios.delete(
-      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`,
-      config
-    );
-    promise
-      .then(() => {
-        importHabits();
-      })
-      .catch((error) => {
-        alert(error.data);
-      });
+    const text = "Deseja apagar este hábito?";
+    if (window.confirm(text) == true) {
+      const promise = axios.delete(
+        `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`,
+        config
+      );
+      promise
+        .then(() => {
+          importHabits();
+        })
+        .catch((error) => {
+          alert(error.data);
+        });
+    }
   }
 
   if (habits.length === 0) {
@@ -152,14 +142,11 @@ function RenderHabits({ habits, weekDays, importHabits }) {
                   </Day>
                 ))}
               </div>
-              {confirmDelete[i] ? (
-                <Del onClick={() => deleteHabit(el.id)}>Deletar</Del>
-              ) : (
-                <ion-icon
-                  onClick={() => confirm(i)}
-                  name="trash-outline"
-                ></ion-icon>
-              )}
+
+              <ion-icon
+                onClick={() => deleteHabit(el.id)}
+                name="trash-outline"
+              ></ion-icon>
             </NewHabit>
           );
         })}
