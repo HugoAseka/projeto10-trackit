@@ -75,7 +75,7 @@ function AddNewHabit({
           </Day>
         ))}
       </div>
-      <Bottom>
+      <Bottom loading={loading}>
         <p onClick={() => setShowAddNewHabit(false)}>Cancelar</p>
         <button disabled={loading} onClick={createHabit}>
           {loading ? <ThreeDots color="white" /> : "Salvar"}
@@ -325,6 +325,7 @@ const Bottom = styled.div`
     border-radius: 6px;
     cursor: pointer;
     border: none;
+    opacity: ${({ loading }) => (loading ? 0.7 : 1)};
   }
 `;
 const NoHabits = styled.div`

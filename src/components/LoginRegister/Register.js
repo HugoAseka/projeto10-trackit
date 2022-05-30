@@ -42,7 +42,7 @@ export default function Register() {
       <Logo>
         <img src="./logo.png" alt="logo" />
       </Logo>
-      <Inputs onSubmit={registerAPI}>
+      <Inputs loading={loading}onSubmit={registerAPI}>
         <input
           type="email"
           placeholder="email"
@@ -124,6 +124,7 @@ const Inputs = styled.form`
     border-radius: 6px;
     font-size: 20px;
     background-color: #52b6ff;
+    opacity: ${({loading}) => loading ? 0.7 : 1};
     border: none;
     color: white;
     display: flex;
