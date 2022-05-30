@@ -71,4 +71,6 @@ const Center = styled.div`
   height: 80px;
   border-radius: 100px;
   cursor: pointer;
+  CircularProgressbar {
+    text-align:center;
 `;
